@@ -1,0 +1,56 @@
+{
+    "id": "vonage",
+    "name": "Vonage SMS",
+    "version": "1.0.0",
+    "description": "Send SMS through Vonage's SMS API. Admin-editable credentials and sender, plus a test-text button. A capability for core and other services: answers the sms.providers and sms.send hooks",
+    "category": "business",
+    "author": {
+        "name": "Gavin Cox"
+    },
+    "license": "proprietary",
+
+    "requires": {
+        "osmium": ">=1.0.0",
+        "php": ">=8.1",
+        "services": []
+    },
+
+    "provides": ["sms"],
+
+    "autoload": [
+        "models"
+    ],
+
+    "hooks": {
+        "sms.providers": ["Osmium\\Services\\Vonage\\Models\\VonageSms::provider"],
+        "sms.send": ["Osmium\\Services\\Vonage\\Models\\VonageSms::send"]
+    },
+
+    "admin": {
+        "menu": {
+            "section": "Content",
+            "items": [
+                {
+                    "id": "vonage",
+                    "label": "Vonage SMS",
+                    "icon": "bx bx-message-dots",
+                    "route": "admin/settings/vonage",
+                    "activePattern": "admin/settings/vonage",
+                    "role": null
+                }
+            ]
+        },
+        "routes": {
+            "admin/settings/vonage": {
+                "controller": "controllers/VonageController.php",
+                "class": "Osmium\\Services\\Vonage\\Controllers\\VonageController",
+                "method": "index",
+                "title": "Vonage SMS"
+            }
+        }
+    },
+
+    "setup": {
+        "postInstallNote": "Disabled by default. Enter the API key, API secret and a sender (a Vonage number or an alphanumeric sender ID) on the Vonage SMS settings page, press Send test text, then switch on Send SMS through Vonage. This service only sends; core and other services text through the sms.send hook. Only one SMS provider can be installed at a time."
+    }
+}

@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-between align-items-center py-3 mb-4">
+    <h4 class="mb-0">
+        <span class="text-muted fw-light">Services /</span> Vonage SMS
+    </h4>
+    <button type="submit" form="settings-form" class="btn btn-primary">
+        <i class="bx bx-save me-1"></i> Save Settings
+    </button>
+</div>
+
+<?php if ($admin['settingsSaved']): ?>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Settings saved successfully!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if ($admin['settingsError'] ?? false): ?>
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <?= \htmlspecialchars($admin['settingsError'] ?? '') ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<?php if ($admin['testResult'] ?? false): ?>
+    <?php $testOk = \str_starts_with($admin['testResult'], 'ok'); ?>
+    <div class="alert alert-<?= $testOk ? 'success' : 'danger' ?> alert-dismissible fade show" role="alert">
+        Test text: <?= \htmlspecialchars($admin['testResult']) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<?php endif; ?>
+
+<form method="POST" action="<?= $admin['basePath'] ?>settings/vonage/" id="settings-form">
+    <input type="hidden" name="token" value="<?= $template['formToken'] ?? '' ?>">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bx bx-key me-2"></i>Vonage account</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enabled" name="enabled"
+                                <?= ($admin['config']['vonage']['enabled'] ?? false) ? 'checked' : '' ?>>
+                            <label class="form-check-label fw-semibold" for="enabled">Send SMS through Vonage</label>
+                        </div>
+                        <div class="form-text">This service only sends. Whatever wants to text (core or another service) asks it to. Each text is charged by Vonage.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="api_key" class="form-label fw-semibold">API key</label>
+                        <input type="text" class="form-control" id="api_key" name="api_key" autocomplete="off"
+                            value="<?= \htmlspecialchars($admin['config']['vonage']['apiKey'] ?? '') ?>">
+                        <div class="form-text">From your Vonage API dashboard.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="api_secret" class="form-label fw-semibold">API secret</label>
+                        <input type="password" class="form-control" id="api_secret" name="api_secret" autocomplete="off"
+                            placeholder="<?= !empty($admin['config']['vonage']['apiSecretSet']) ? 'Saved - leave blank to keep' : 'Not set' ?>">
+                        <div class="form-text">Next to the API key in the Vonage API dashboard.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="sender" class="form-label fw-semibold">Sender</label>
+                        <input type="text" class="form-control" id="sender" name="sender" autocomplete="off"
+                            value="<?= \htmlspecialchars($admin['config']['vonage']['sender'] ?? '') ?>">
+                        <div class="form-text">A Vonage number (+447700900123) or an alphanumeric sender ID (up to 11 letters, digits or spaces, for example your shop name). Alphanumeric sender IDs are not accepted in every country, and cannot receive replies.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form method="POST" action="<?= $admin['basePath'] ?>settings/vonage/">
+    <input type="hidden" name="token" value="<?= $template['formToken'] ?? '' ?>">
+    <input type="hidden" name="action" value="send_test">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bx bx-send me-2"></i>Send a test text</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label for="test_number" class="form-label fw-semibold">Mobile number</label>
+                        <input type="text" class="form-control" id="test_number" name="test_number" autocomplete="off" placeholder="07700 900123">
+                        <div class="form-text">Sends a short test message using the saved settings (save first). Works even while switched off, and is charged like a real text.</div>
+                    </div>
+                    <button type="submit" class="btn btn-outline-primary"><i class="bx bx-send me-1"></i> Send test text</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
